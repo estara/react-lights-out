@@ -7,6 +7,7 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
+      <h3>Make all the cells dark to win.</h3>
       <Board />
     </div>
   );

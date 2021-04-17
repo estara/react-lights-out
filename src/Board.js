@@ -27,21 +27,19 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows, ncols, chanceLightStartsOn }) {
+function Board({ nrows=3, ncols=3, chanceLightStartsOn=0.5 }) {
   const [board, setBoard] = useState(createBoard());
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
     let initialBoard = [];
-    // create array-of-arrays
-    for (let i = 0; i < nrows; i++) {
-      initialBoard.push(Array.from({length: ncols}));
-    };
-    // insert values
-    for (let y = 0; y < initialBoard.length; y++) {
-        for (let x = 0; x < initialBoard[y].length; x++) {
-          initialBoard[y][x] = <Cell flipCellsAroundMe={flipCellsAround(`${y}-${x}`)} isLit={Math.random() < chanceLightStartsOn}/>;
+    // create array-of-arrays and insert true/false values
+    for (let y = 0; y < nrows; y++) {
+      let row = [];
+        for (let x = 0; x < ncols; x++) {
+          row.push(Math.random() < chanceLightStartsOn);
         };
+      initialBoard.push(row);
     };
     return initialBoard;
   }
@@ -84,16 +82,27 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
     });
   }
 
-  // if the game is won, just show a winning msg & render nothing else
+  //if the game is won, just show a winning msg & render nothing else
   if (hasWon()) {
-    return (<p>You won!</p>)
+    return <p>You won!</p>
   }
 
   // make table board
+  let tableBoard = [];
+
+  for (let y = 0; y < nrows; y++) {
+    let row = [];
+    for (let x = 0; x < ncols; x++) {
+      let coord = `${y}-${x}`;
+      row.push(<Cell key={coord} isLit={board[y][x]} flipCellsAroundMe={() => flipCellsAround(coord)}/>);
+    }
+    tableBoard.push(<tr key={y}>{row}</tr>);
+  }
+
   return (
-    <div>
-      <Board/>
-    </div>
+    <table className="Board">
+      <tbody>{tableBoard}</tbody>
+    </table>
   )
 }
 
